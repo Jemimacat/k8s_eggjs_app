@@ -1,5 +1,5 @@
 {
-  "name": "adminTask",
+  "name": "elearn",
   "version": "1.0.0",
   "description": "",
   "private": true,
@@ -27,8 +27,8 @@
     "node": ">=10.0.0"
   },
   "scripts": {
-    "start": "egg-scripts start --daemon --title=egg-server-adminTask",
-    "stop": "egg-scripts stop --title=egg-server-adminTask",
+    "start": "egg-scripts start --daemon --title=egg-server-elearn",
+    "stop": "egg-scripts stop --title=egg-server-elearn",
     "dev": "egg-bin dev",
     "debug": "egg-bin debug",
     "test": "npm run lint -- --fix && npm run test-local",

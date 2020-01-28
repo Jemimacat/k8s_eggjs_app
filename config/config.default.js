@@ -17,7 +17,7 @@ module.exports = appInfo => {
     // use for cookie sign key, should change to your own and keep security
     keys: '1568471211994_9369',
 
-    appName: 'adminTask',
+    appName: 'elearn',
 
     // middleware: ['errorPage', 'errorHandler'],
     middleware: [],
