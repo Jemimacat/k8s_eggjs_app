@@ -1,0 +1,115 @@
+{% extends 'partial/layout.njk' %}  
+
+{% block body %}
+
+<div class="page-hd">
+    <h1 class="page-hd-title">
+        行政任务列表
+    </h1>
+    <p class="page-hd-desc"></p>
+</div>
+
+<a href="/page/adminHistoryTaskList" class="weui-btn weui-btn_mini weui-btn_primary">查看历史</a>
+<a href="/page/newTask" class="weui-btn weui-btn_mini weui-btn_primary">新增任务</a>
+
+<div style="margin-top:2rem"></div>
+
+<div id="admin-task-list-DOM"></div>
+
+<div style="margin-top:2rem"></div>
+
+<!-- TEMPLATE -->
+{% verbatim %}
+    <template id="admin-task-list-TEM">
+        <div class="weui-cells ">
+            {% for taskItem in _adminTaskList %}
+                <div class="weui-form-preview">
+                    <a href="/page/taskDetail?id={{ taskItem.id }}">
+                        <div class="weui-form-preview__hd">
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">任务内容</label>
+                                <em class="weui-form-preview__value">{{ taskItem.project }} {{ taskItem.usage }}</em>
+                            </div>
+                        </div>
+                        <div class="weui-form-preview__bd">
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">负责人</label>
+                                <span class="weui-form-preview__value">{{ taskItem.staffName }} {{ taskItem.fromOrganization }}</span>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">到期日期</label>
+                                <span class="weui-form-preview__value">{{ taskItem.dueDate }}</span>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">金额</label>
+                                <span class="weui-form-preview__value">{{ taskItem.amount }}</span>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="weui-form-preview__ft">
+                        <a href="/page/validHistoryTask?id={{ taskItem.id }}" class="weui-form-preview__btn weui-form-preview__btn_primary">完成</a>
+                    </div>
+                </div>       
+            {% endfor %}
+        </div>
+    </template>
+{% endverbatim %}
+
+{% endblock %}
+
+{% block script %}
+<script>
+
+// -------定义变量-------
+function getStaffList() {
+    var staffList = {{ staffList | dump | safe }};
+    return staffList;
+}
+
+var _staffList = getStaffList();
+
+// 所有未完成任务列表
+function getAdminTaskList() {
+    var adminTaskList = {{ adminTaskList | dump | safe}};
+
+    // Filter the 'active' tasks & Add attributes
+    var adminTaskList2 = _.filter(adminTaskList, {'taskStatus':'active'}).map(task=> {
+        var task2 = task;
+        //  add "reminderDate"
+        if (task.dueDate) {
+            task2.dueDate = dayjs(task.dueDate).format('yyyy-mm-dd');
+        }else {
+            task2.dueDate = dayjs().format('yyyy-mm-dd');
+        }
+        task2.reminderDate = dayjs(task2.dueDate).subtract('7','day').format('yyyy-mm-dd');
+
+        // add "staffId"
+        var staffItem = _.find(_staffList,{staffName:task.staffName});
+        task2.staffId = staffItem.id.toString();
+
+        return task2;
+    });
+
+    // Sort adminTaskList by dueDate
+    var adminTaskListSorted = _.sortBy(adminTaskList2,'dueDate');
+    
+    return adminTaskListSorted;
+}
+
+var _adminTaskList = getAdminTaskList();
+
+// -------功能函数-------
+
+// Display adminTaskList
+function renderTaskList() {
+    var adminTaskListTEM = $('#admin-task-list-TEM').html();
+    var adminTaskListHTML = nunjucks.renderString(adminTaskListTEM, {_adminTaskList});
+    $('#admin-task-list-DOM').html(adminTaskListHTML);
+}
+
+$(function () {
+    renderTaskList();
+});
+</script>
+
+{% endblock %}

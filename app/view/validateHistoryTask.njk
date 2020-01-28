@@ -1,0 +1,206 @@
+{% extends 'partial/layout.njk' %}  
+
+{% block body %}
+
+<div class="page-hd">
+    <h1 class="page-hd-title">
+        确认任务完成
+    </h1>
+    <p class="page-hd-desc"></p>
+</div>
+
+<a href="/page/adminTaskList" class="weui-btn weui-btn_mini weui-btn_primary">任务列表</a>
+<a href="/page/newTask" class="weui-btn weui-btn_mini weui-btn_primary">新增任务</a>
+
+  <div class="weui-cells weui-cells_form">
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="mobile" class="weui-label">项目</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="project" type="text" value="{{ adminTaskItem.project }}" style="color:DimGrey;" readonly="">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="mobile" class="weui-label">任务类型</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="usage" type="text" value="{{ adminTaskItem.usage }}" style="color:DimGrey;" placeholder="">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="mobile" class="weui-label">负责人</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="staffName" type="text" value="{{ adminTaskItem.staffName }}" style="color:DimGrey;" readonly="">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label class="weui-label">金额</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="amount" type="number" step="0.01" value="{{ adminTaskItem.amount }}">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="mobile" class="weui-label">付款机构</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="fromOrganization" type="text" value="{{ adminTaskItem.fromOrganization }}" readonly="" style="color:DimGrey;">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="date" class="weui-label">到期日期</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="dueDate" type="text" value="{{ adminTaskItem.dueDate }}" readonly="" style="color:DimGrey;">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="mobile" class="weui-label">提醒频率</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="frequency" type="text" value="{{ adminTaskItem.frequency }}" readonly="" style="color:DimGrey;">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="mobile" class="weui-label">备注</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="remarks" type="text" value="{{ adminTaskItem.remarks }}" readonly="" style="color:DimGrey;" placeholder="无">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="mobile" class="weui-label">操作人</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="operator" type="text" value="" placeholder="请填入操作人">
+      </div>
+    </div>  
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="mobile" class="weui-label">完成时间</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="closeDate" type="text" value="{{_now}}" readonly="" placeholder="请选择完成时间">
+      </div>
+    </div>  
+
+  <input name="weui_switch_value" id="weui_switch_value" type="hidden" value="on" type="radio" checked="checked"/>
+  <div class="weui-cell weui-cell_switch">
+    <div class="weui-cell__bd">任务开启</div>
+    <div class="weui-cell__ft">
+      <label for="switchCP" class="weui-switch-cp">
+        <input id="switchCP" class="weui-switch-cp__input" checked="checked" type="checkbox">
+        <div class="weui-switch-cp__box"></div>
+      </label>
+    </div>
+  </div>
+
+  <div class="weui-cell">
+    <div class="weui-cell__hd">
+      <label for="mobile" class="weui-label">操作备注</label>
+    </div>
+    <div class="weui-cell__bd">
+        <textarea class="weui-textarea" id="operationRemarks" placeholder="请输入文本" rows="2"></textarea>
+    </div>
+  </div>  
+</div>
+
+  <div class="weui-cells weui-cells_form">
+    <a onclick="confirmTask()" class="weui-btn weui-btn_primary">确认完成</a>
+  </div>
+
+<div style="margin-top:2rem"></div>
+{% endblock %}
+
+{% block script %}
+<script>
+// Variables
+var _now = dayjs().format('yyyy-mm-dd');
+
+// Dropdown: "closeDate" 完成时间
+$("#closeDate").calendar({dateFormat: 'yyyy-mm-dd'});
+
+// Variables: adminTaskItem & adminTaskId
+var _adminTaskItem = {{ adminTaskItem | dump | safe }};
+var _adminTaskId = {{ adminTaskId | dump | safe }};
+
+// Operations after clicking on the "confirm" button
+function getHistoryInfo() {
+  _adminTaskItem.adminTaskId = _adminTaskId;
+  _adminTaskItem.amount = $('#amount').val();
+  _adminTaskItem.operator = $('#operator').val();
+  _adminTaskItem.closeDate = $('#closeDate').val();
+  _adminTaskItem.operationRemarks = $('#operationRemarks').val();
+  if ($("#weui_switch_value").val() == "on"){
+    _adminTaskItem.taskStatus = "active";
+  }else{
+    _adminTaskItem.taskStatus = "inactive";
+  }
+}
+
+function sendRequest() {
+  $.post(
+    '/task/addHistoryTask?_csrf={{ ctx.csrf | safe }}',
+    _adminTaskItem,
+    function (data) {
+      // Showed on front end
+      console.log("Request Sent!");
+    }
+  );
+}
+
+function submitHistoryTask() {
+  // Validate info on the form
+  if (!$('#operator').val()) {
+    $.hideLoading();
+    $.toast("请填入操作人", "cancel");
+    return;
+  }
+
+  if (!$('#closeDate').val()) {
+    $.hideLoading();
+    $.toast("请选择完成时间", "cancel");
+    return;
+  }
+
+  // Get confirmed task info
+  getHistoryInfo();
+
+  // Send request
+  sendRequest();
+}
+
+function confirmTask() {
+  submitHistoryTask();
+}
+
+$(function () {
+  $("#switchCP").bind("click", function () {
+    if($("#weui_switch_value").val()=="off"){
+      $("#weui_switch_value").val("on");
+    }else{
+      $("#weui_switch_value").val("off");
+    }
+  });
+});
+</script>
+{% endblock %}

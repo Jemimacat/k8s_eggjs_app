@@ -1,0 +1,109 @@
+{% extends 'partial/layout.njk' %}  
+
+{% block body %}
+
+<div class="page-hd">
+    <h1 class="page-hd-title">
+        历史任务列表
+    </h1>
+    <p class="page-hd-desc"></p>
+</div>
+
+<a href="/page/adminTaskList" class="weui-btn weui-btn_mini weui-btn_primary">任务列表</a>
+<a href="/page/newTask" class="weui-btn weui-btn_mini weui-btn_primary">新增任务</a>
+
+<div style="margin-top:2rem"></div>
+
+<div id="history-task-list-DOM"></div>
+
+<div style="margin-top:2rem"></div>
+
+<!-- TEMPLATE -->
+{% verbatim %}
+    <template id="history-task-list-TEM">
+        <div class="weui-cells ">
+            {% for taskItem in _adminHistoryTaskList %}
+                <div class="weui-form-preview">
+                    <a href="/page/taskDetail?id={{ taskItem.id }}">
+                        <div class="weui-form-preview__hd">
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">任务内容</label>
+                                <em class="weui-form-preview__value">{{ taskItem.project }} {{ taskItem.usage }}</em>
+                            </div>
+                        </div>
+                        <div class="weui-form-preview__bd">
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">负责人</label>
+                                <span class="weui-form-preview__value">{{ taskItem.staffName }} {{ taskItem.fromOrganization }}</span>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">到期日期</label>
+                                <span class="weui-form-preview__value">{{ taskItem.dueDate }}</span>
+                            </div>
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">金额</label>
+                                <span class="weui-form-preview__value">{{ taskItem.amount }}</span>
+                            </div>
+
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">处理人</label>
+                                <span class="weui-form-preview__value">{{ taskItem.operator }}</span>
+                            </div>
+
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">关闭时间</label>
+                                <span class="weui-form-preview__value">{{ taskItem.closeDate }}</span>
+                            </div> 
+
+                            <div class="weui-form-preview__item">
+                                <label class="weui-form-preview__label">备注</label>
+                                <span class="weui-form-preview__value">{{ taskItem.operationRemarks }}</span>
+                            </div>                           
+                        </div>
+                    </a>
+                </div>       
+            {% endfor %}
+        </div>
+    </template>
+{% endverbatim %}
+
+{% endblock %}
+
+{% block script %}
+<script>
+
+// -------定义变量-------
+function getStaffList() {
+    var staffList = {{ staffList | dump | safe }};
+    return staffList;
+}
+
+var _staffList = getStaffList();
+
+// 所有完成任务列表
+function getAdminHistoryTaskList() {
+    var adminHistoryTaskList = {{ adminHistoryTaskList | dump | safe}};
+
+    // Sort adminTaskList by dueDate
+    var adminHistoryTaskListSorted = _.sortBy(adminHistoryTaskList,'closeDate');
+    
+    return adminHistoryTaskListSorted;
+}
+
+var _adminHistoryTaskList = getAdminHistoryTaskList();
+
+// -------功能函数-------
+
+// Display adminHistoryTaskList
+function renderTaskList() {
+    var historyTaskListTEM = $('#history-task-list-TEM').html();
+    var historyTaskListHTML = nunjucks.renderString(historyTaskListTEM, {_adminHistoryTaskList});
+    $('#history-task-list-DOM').html(historyTaskListHTML);
+}
+
+$(function () {
+    renderTaskList();
+});
+</script>
+
+{% endblock %}

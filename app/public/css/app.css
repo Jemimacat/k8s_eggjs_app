@@ -1,0 +1,124 @@
+body,
+html {
+  height                     : 100%;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  max-width: 500px;
+  margin   : auto;
+}
+
+.demos-title {
+  text-align : center;
+  font-size  : 34px;
+  color      : #3cc51f;
+  font-weight: 400;
+  margin     : 0 15%;
+}
+
+.demos-sub-title {
+  text-align: center;
+  color     : #888;
+  font-size : 14px;
+}
+
+.demos-header {
+  padding: 35px 0;
+}
+
+.demos-content-padded {
+  padding: 15px;
+}
+
+.demos-second-title {
+  text-align : center;
+  font-size  : 24px;
+  color      : #3cc51f;
+  font-weight: 400;
+  margin     : 0 15%;
+}
+
+.app-title {
+  text-align : center;
+  font-size  : 34px;
+  color      : #3cc51f;
+  font-weight: 400;
+  margin     : 0 15%;
+}
+
+.app-sub-title {
+  text-align: center;
+  color     : #888;
+  font-size : 14px;
+}
+
+.app-header {
+  padding: 35px 0;
+}
+
+.app-content-padded {
+  padding: 15px;
+}
+
+.app-second-title {
+  text-align : center;
+  font-size  : 24px;
+  color      : #3cc51f;
+  font-weight: 400;
+  margin     : 0 15%;
+}
+
+footer {
+  text-align: center;
+  font-size : 14px;
+  padding   : 20px;
+}
+
+footer a {
+  color          : #999;
+  text-decoration: none;
+}
+
+/* 空间 */
+
+.weui-btn-area {
+  margin: 35px 15px 35px;
+}
+
+/* 提示框 */
+.tip {
+  width        : auto;
+  height       : auto;
+  border       : 1px solid darkgray;
+  border-radius: 8px;
+}
+
+/* 提示框小角的小方块 */
+.tip .inner {
+  background-color: #FFF;
+  width           : 10px;
+  height          : 10px;
+  border          : 1px solid #000;
+  /* 旋转小方块并调整位置形成尖角 */
+  position     : relative;
+  left         : 145px;
+  top          : -7px;
+  transform    : rotate(45deg);
+  border-right : 0px;
+  border-bottom: 0px;
+}
+
+/* 提示框内部内容*/
+.tipcontent {
+  margin    : 4px;
+  font-size : 4px;
+  text-align: left;
+}
+
+
+
+.weui-picker-container,
+.weui-picker-overlay {
+  bottom  : 0%;
+}

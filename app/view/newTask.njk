@@ -1,0 +1,284 @@
+{% extends 'partial/layout.njk' %}  
+
+{% block body %}
+
+<div class="page-hd">
+    <h1 class="page-hd-title">
+        新增任务
+    </h1>
+    <p class="page-hd-desc"></p>
+</div>
+
+<a href="/page/adminTaskList" class="weui-btn weui-btn_mini weui-btn_primary">任务列表</a>
+<a href="/page/adminHistoryTaskList" class="weui-btn weui-btn_mini weui-btn_primary">查看历史</a>
+
+  <div class="weui-cells weui-cells_form">
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="mobile" class="weui-label">项目</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="project" type="text" value="" placeholder="填入项目标题">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="mobile" class="weui-label">任务类型</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="usage" type="text" value="" placeholder="请填入任务类型">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="mobile" class="weui-label">负责人</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="staffName" type="text" value="" readonly="" placeholder="请选择负责人">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label class="weui-label">金额</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="amount" type="number" step="0.01" placeholder="请输入金额">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="mobile" class="weui-label">付款机构</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="fromOrganization" type="text" value="" readonly="" placeholder="请选择付款机构">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="date" class="weui-label">到期日期</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="dueDate" type="text" readonly="" placeholder="请输入到期日期">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="mobile" class="weui-label">提醒频率</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="frequency" type="text" value="" readonly="" placeholder="请选择提醒频率">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="mobile" class="weui-label">备注</label>
+      </div>
+      <div class="weui-cell__bd">
+          <textarea class="weui-textarea" id="remarks" placeholder="请输入文本" rows="2"></textarea>
+      </div>
+    </div>
+  </div>
+  
+  <div class="weui-cells weui-cells_form">
+    <a onclick="submitNewTask()" class="weui-btn weui-btn_primary">递交</a>
+  </div>
+
+<div style="margin-top:2rem"></div>
+
+{% endblock %}
+
+{% block script %}
+<script>
+  // ---- Dropdown Inputs ---- 
+  // "usage" 任务类型
+  function getUsageType() {
+    var usageType = {{ usageType | dump | safe }};
+    var usageType2 = usageType.map(usage => {
+      var usage2 = {};
+      usage2.title = usage.usage;
+      usage2.value = usage.usage;
+      return usage2;
+    });
+    return usageType2;
+  }
+
+  var _usageType = getUsageType();
+  $("#usage").select({
+    title: "选择任务类型",
+    items: _usageType,
+    onChange: function () {
+      var usage = $('#usage').val();
+      console.log("选择任务类型 : ", usage);
+    }
+  });
+
+  // "staffList" 负责人
+  function getStaffList() {
+    var staffList = {{ staffList | dump | safe }};
+    var staffList2 = staffList.map(staff=>{
+      var staff2 = staff;
+      staff2.title = staff.staffName;
+      staff2.value = staff.staffName;
+      return staff2;
+    });
+
+    return staffList2;
+  }
+
+  var _staffList = getStaffList();
+  $("#staffName").select({
+    title: "选择任务类型",
+    items: _staffList,
+    onChange: function () {
+      var staffName = $('#staffName').val();
+      console.log("选择负责人 : ", staffName);
+    }
+  });
+
+  // "fromOrganization" 付款机构
+  function getOrganizationList() {
+    var organizationList = {{ organizationList | dump | safe }};
+    var organizationList2 = organizationList.map(organization=>{
+      var organization2 = {};
+      organization2.title = organization.organization;
+      organization2.value = organization.organization;
+      return organization2;
+    });
+
+    return organizationList2;
+  }
+
+  var _organizationList = getOrganizationList();
+  $("#fromOrganization").select({
+    title: "选择付款机构",
+    items: _organizationList,
+    onChange: function () {
+      var organization = $('#fromOrganization').val();
+      console.log("选择付款机构 : ", organization);
+    }
+  });
+
+  // "dueDate" 到期日期
+  $("#dueDate").calendar({dateFormat: 'yyyy-mm-dd'});
+
+  // "frequency" 提醒频率
+  function getFrequencyList() {
+    var frequencyList = {{ frequencyList | dump | safe }};
+    var frequencyList2 = frequencyList.map(frequency=>{
+      var frequency2 = {};
+      frequency2.title = frequency.frequency;
+      frequency2.value = frequency.frequency;
+      return frequency2;
+    });
+
+    return frequencyList2;
+  }
+
+  var _frequencyList = getFrequencyList();
+  $("#frequency").select({
+    title: "选择提醒频率",
+    items: _frequencyList,
+    onChange: function () {
+      var frequency = $('#frequency').val();
+      console.log("选择付款机构 : ", frequency);
+    }
+  });
+
+  // ---- Operations after "Submitting" ----
+  var _newTask = {};
+
+  // Get newTask INFO from the form
+  function getNewTaskInfo() {
+    _newTask = {
+      project: $('#project').val(),
+      usage: $('#usage').val(),
+      staffName: $('#staffName').val(),
+      amount: $('#amount').val(),
+      // currencySymbol: $('#currencySymbol').val(),
+      fromOrganization: $('#fromOrganization').val(),
+      dueDate: $('#dueDate').val(),
+      frequency: $('#frequency').val(),
+      remarks: $('#remarks').val()
+    }
+    //  add "reminderDate"
+    _newTask.reminderDate = dayjs(_newTask.dueDate).subtract('7','day').format('yyyy-mm-dd');
+
+    // add "staffId"
+    var staffItem = _.find(_staffList,{staffName:_newTask.staffName});
+    _newTask.staffId = staffItem.id.toString();
+  }
+
+  // Submit data to backdnd
+  function sendRequest() {
+    $.post(
+      '/task/addNewTask?_csrf={{ ctx.csrf | safe }}',
+        _newTask,
+      function (data) {
+          // Showed on front end
+          console.log("Request Sent!");
+      }
+    );
+  }  
+
+  // Submit the new task
+  function submitNewTask() {
+    // Validate info on the form
+    if (!$('#project').val()) {
+      $.hideLoading();
+      $.toast("请填入项目标题", "cancel");
+      return;
+    }
+
+    if (!$('#usage').val()) {
+      $.hideLoading();
+      $.toast("请填入任务类型", "cancel");
+      return;
+    }  
+
+    if (!$('#staffName').val()) {
+      $.hideLoading();
+      $.toast("请选择负责人", "cancel");
+      return;
+    }   
+
+    if (!$('#amount').val()) {
+      $.hideLoading();
+      $.toast("请填入金额", "cancel");
+      return;
+    } 
+
+    if (!$('#fromOrganization').val()) {
+      $.hideLoading();
+      $.toast("请选择付款机构", "cancel");
+      return;
+    } 
+
+    if (!$('#dueDate').val()) {
+      $.hideLoading();
+      $.toast("请选择到期日期", "cancel");
+      return;
+    } 
+
+    if (!$('#frequency').val()) {
+      $.hideLoading();
+      $.toast("请选择提醒频率", "cancel");
+      return;
+    } 
+
+    // Get new task info
+    getNewTaskInfo();
+
+    // Send Request
+    sendRequest(); 
+  }
+
+</script>
+{% endblock %}
+

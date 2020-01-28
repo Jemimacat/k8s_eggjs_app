@@ -1,0 +1,312 @@
+{% extends 'partial/layout.njk' %}  
+
+{% block body %}
+
+<div class="page-hd">
+    <h1 class="page-hd-title">
+        任务详情页面
+    </h1>
+    <p class="page-hd-desc"></p>
+</div>
+
+<a href="/page/adminTaskList" class="weui-btn weui-btn_mini weui-btn_primary">任务列表</a>
+<a href="/page/newTask" class="weui-btn weui-btn_mini weui-btn_primary">新增任务</a>
+
+  <div class="weui-cells weui-cells_form">
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="mobile" class="weui-label">项目</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="project" type="text" value="{{ adminTaskItem.project }}" placeholder="请填入项目名">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="mobile" class="weui-label">任务类型</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="usage" type="text" value="{{ adminTaskItem.usage }}" placeholder="请选择任务类型">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="mobile" class="weui-label">负责人</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="staffName" type="text" value="{{ adminTaskItem.staffName }}" placeholder="请选择负责人">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label class="weui-label">金额</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="amount" type="number" step="0.01" value="{{ adminTaskItem.amount }}" placeholder="请填入金额">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="mobile" class="weui-label">付款机构</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="fromOrganization" type="text" value="{{ adminTaskItem.fromOrganization }}" placeholder="请选择付款机构">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="date" class="weui-label">到期日期</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="dueDate" type="text" value="{{ adminTaskItem.dueDate }}" placeholder="请选择到期日期">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="mobile" class="weui-label">提醒频率</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="frequency" type="text" value="{{ adminTaskItem.frequency }}" placeholder="请选择提醒频率">
+      </div>
+    </div>
+
+    <div class="weui-cell">
+      <div class="weui-cell__hd">
+        <label for="mobile" class="weui-label">备注</label>
+      </div>
+      <div class="weui-cell__bd">
+        <input class="weui-input" id="remarks" type="text" value="{{ adminTaskItem.remarks }}" placeholder="请填入备注">
+      </div>
+    </div>
+
+  <input name="weui_switch_value" id="weui_switch_value" type="hidden" value="on" type="radio" checked="checked"/>
+  <div class="weui-cell weui-cell_switch">
+    <div class="weui-cell__bd">任务开启</div>
+    <div class="weui-cell__ft">
+      <label for="switchCP" class="weui-switch-cp">
+        <input id="switchCP" class="weui-switch-cp__input" checked="checked" type="checkbox">
+        <div class="weui-switch-cp__box"></div>
+      </label>
+    </div>
+  </div>
+
+</div>
+
+  <div class="weui-cells weui-cells_form">
+    <a onclick="updateTask()" class="weui-btn weui-btn_primary">更新任务</a>
+  </div>
+
+<div style="margin-top:2rem"></div>
+{% endblock %}
+
+{% block script %}
+<script>
+  // ---- Dropdown Inputs ---- 
+  // "usage" 任务类型
+  function getUsageType() {
+    var usageType = {{ usageType | dump | safe }};
+    var usageType2 = usageType.map(usage => {
+      var usage2 = {};
+      usage2.title = usage.usage;
+      usage2.value = usage.usage;
+      return usage2;
+    });
+    return usageType2;
+  }
+
+  var _usageType = getUsageType();
+  $("#usage").select({
+    title: "选择任务类型",
+    items: _usageType,
+    onChange: function () {
+      var usage = $('#usage').val();
+      console.log("选择任务类型 : ", usage);
+    }
+  });
+
+  // "staffList" 负责人
+  function getStaffList() {
+    var staffList = {{ staffList | dump | safe }};
+    var staffList2 = staffList.map(staff=>{
+      var staff2 = staff;
+      staff2.title = staff.staffName;
+      staff2.value = staff.staffName;
+      return staff2;
+    });
+
+    return staffList2;
+  }
+
+  var _staffList = getStaffList();
+  $("#staffName").select({
+    title: "选择任务类型",
+    items: _staffList,
+    onChange: function () {
+      var staffName = $('#staffName').val();
+      console.log("选择负责人 : ", staffName);
+    }
+  });
+
+  // "fromOrganization" 付款机构
+  function getOrganizationList() {
+    var organizationList = {{ organizationList | dump | safe }};
+    var organizationList2 = organizationList.map(organization=>{
+      var organization2 = {};
+      organization2.title = organization.organization;
+      organization2.value = organization.organization;
+      return organization2;
+    });
+
+    return organizationList2;
+  }
+
+  var _organizationList = getOrganizationList();
+  $("#fromOrganization").select({
+    title: "选择付款机构",
+    items: _organizationList,
+    onChange: function () {
+      var organization = $('#fromOrganization').val();
+      console.log("选择付款机构 : ", organization);
+    }
+  });
+
+  // "dueDate" 到期日期
+  $("#dueDate").calendar({dateFormat: 'yyyy-mm-dd'});
+
+  // "frequency" 提醒频率
+  function getFrequencyList() {
+    var frequencyList = {{ frequencyList | dump | safe }};
+    var frequencyList2 = frequencyList.map(frequency=>{
+      var frequency2 = {};
+      frequency2.title = frequency.frequency;
+      frequency2.value = frequency.frequency;
+      return frequency2;
+    });
+
+    return frequencyList2;
+  }
+
+  var _frequencyList = getFrequencyList();
+  $("#frequency").select({
+    title: "选择提醒频率",
+    items: _frequencyList,
+    onChange: function () {
+      var frequency = $('#frequency').val();
+      console.log("选择付款机构 : ", frequency);
+    }
+  });
+
+// ---- Operations after "Updating" ----
+
+// Variables: adminTaskItem & adminTaskId
+var _adminTaskItem = {{ adminTaskItem | dump | safe }};
+var _adminTaskId = {{ adminTaskId | dump | safe }};
+
+  // Get newTask INFO from the form
+  function getUpdateTaskInfo() {
+    _updateTask = _adminTaskItem;
+    _updateTask.project = $('#project').val();
+    _updateTask.usage = $('#usage').val();
+    _updateTask.staffName = $('#staffName').val();
+    _updateTask.amount = $('#amount').val();
+    _updateTask.fromOrganization = $('#fromOrganization').val();
+    _updateTask.dueDate = $('#dueDate').val();
+    _updateTask.frequency = $('#frequency').val();
+    _updateTask.remarks = $('#remarks').val();
+
+    // update "taskStatus"
+    if ($("#weui_switch_value").val() == "on"){
+      _updateTask.taskStatus = "active";
+    }else{
+      _updateTask.taskStatus = "inactive";
+    }
+
+    //  update "reminderDate"
+    _updateTask.reminderDate = dayjs(_updateTask.dueDate).subtract('7','day').format('yyyy-mm-dd');
+
+    // update "staffId"
+    var staffItem = _.find(_staffList,{staffName:_updateTask.staffName});
+    _updateTask.staffId = staffItem.id.toString();
+  }
+
+  // Submit data to backdnd
+  function sendRequest() {
+    $.post(
+      '/task/updateTask?_csrf={{ ctx.csrf | safe }}',
+        _updateTask,
+      function (data) {
+          // Showed on front end
+          console.log("Request Sent!");
+      }
+    );
+  }  
+
+  // Submit the new task
+  function updateTask() {
+    // Validate info on the form
+    if (!$('#project').val()) {
+      $.hideLoading();
+      $.toast("请填入项目标题", "cancel");
+      return;
+    }
+
+    if (!$('#usage').val()) {
+      $.hideLoading();
+      $.toast("请填入任务类型", "cancel");
+      return;
+    }  
+
+    if (!$('#staffName').val()) {
+      $.hideLoading();
+      $.toast("请选择负责人", "cancel");
+      return;
+    }   
+
+    if (!$('#amount').val()) {
+      $.hideLoading();
+      $.toast("请填入金额", "cancel");
+      return;
+    } 
+
+    if (!$('#fromOrganization').val()) {
+      $.hideLoading();
+      $.toast("请选择付款机构", "cancel");
+      return;
+    } 
+
+    if (!$('#dueDate').val()) {
+      $.hideLoading();
+      $.toast("请选择到期日期", "cancel");
+      return;
+    } 
+
+    if (!$('#frequency').val()) {
+      $.hideLoading();
+      $.toast("请选择提醒频率", "cancel");
+      return;
+    } 
+
+    // Get new task info
+    getUpdateTaskInfo();
+
+    // Send Request
+    sendRequest(); 
+  }
+
+$(function () {
+  $("#switchCP").bind("click", function () {
+    if($("#weui_switch_value").val()=="off"){
+      $("#weui_switch_value").val("on");
+    }else{
+      $("#weui_switch_value").val("off");
+    }
+  });
+});
+</script>
+{% endblock %}
